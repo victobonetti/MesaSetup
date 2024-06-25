@@ -1,0 +1,18 @@
+networks:
+  servicos:
+    external:
+      name: servicos
+
+services:
+  mesa-auth:
+    image: "{{ docker_account }}/mesa-auth:latest"
+    container_name: "{{ auth_service_name }}"
+    restart: always
+    environment:
+        - SELF_NAME={{ auth_service_name }}
+        - CLIENT_NAME={{ client_name }}
+        - AUTH_SECRET={{ auth_secret }}
+        - ENCRYPTION_KEY={{ encription_key }}
+        - DB_HOST={{ mongo_db_hostname }}
+    networks:
+      - servicos

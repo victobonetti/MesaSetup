@@ -1,0 +1,23 @@
+- name: Definição de variáveis para serviço de autenticação
+  ansible.builtin.set_fact:
+    auth_service_name: auth
+    auth_secret:
+    encription_key: 
+
+- name: Definição de variáveis para database
+  ansible.builtin.set_fact:
+    mongo_db_host_name: mongo-db # Criar senha para acessar db e adicionar variaveis de ambiente no serviço auth
+
+# Atribuir VARS e criar arquivo dos composes em pasta separada
+
+- name: Setup de serviço de Autenticação
+  community.docker.docker_compose:
+    project_src: "{{ compose_dir_path }}/" # ler arquivo compose específico
+    files:
+      - infrastructure-compose.yml
+
+- name: Setup de serviço de Autenticação
+  community.docker.docker_compose:
+    project_src: "{{ compose_dir_path }}/" # ler arquivo compose específico
+    files:
+      - infrastructure-compose.yml
