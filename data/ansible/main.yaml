@@ -10,7 +10,3 @@
         name: sdk
       tags: always
 
-    - name: Instalação de serviços
-      ansible.builtin.include_role:
-        name: sdk
-      tags: always
