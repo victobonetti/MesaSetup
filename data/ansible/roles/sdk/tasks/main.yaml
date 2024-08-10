@@ -4,20 +4,32 @@
     auth_secret:
     encription_key: 
 
+
+# self_name = "auth"
+# client_name = "teste"
+# auth_secret = "your_secret_key"
+# encryption_key = "ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg="
+
 - name: Definição de variáveis para database
   ansible.builtin.set_fact:
     mongo_db_host_name: mongo-db # Criar senha para acessar db e adicionar variaveis de ambiente no serviço auth
+    mongo_db_password: 
+    mongo_db_username: 
 
 # Atribuir VARS e criar arquivo dos composes em pasta separada
 
-- name: Setup de serviço de Autenticação
-  community.docker.docker_compose:
-    project_src: "{{ compose_dir_path }}/" # ler arquivo compose específico
-    files:
-      - infrastructure-compose.yml
+- name: Criação de pasta para arquivos de compose
+  ansible.builtin.file:
+    path: "{{ compose_dir_path }}"
+    state: directory
+
+- name: Escrita de arquivo de compose em pasta
+  ansible.builtin.template:
+    src: templates/composes/auth-compose.yaml.j2
+    dest: "{{ compose_dir_path }}/auth-compose.yaml"
 
 - name: Setup de serviço de Autenticação
   community.docker.docker_compose:
-    project_src: "{{ compose_dir_path }}/" # ler arquivo compose específico
+    project_src: "{{ compose_dir_path }}/auth-compose.yaml" 
     files:
       - infrastructure-compose.yml

@@ -4,6 +4,15 @@ networks:
       name: servicos
 
 services:
+  {{ mongo_db_hostname }}:
+    image: mongo:latest
+    environment:
+       - MONGO_INITDB_ROOT_USERNAME: {{ mongo_db_username }}
+       - MONGO_INITDB_ROOT_PASSWORD: {{ mongo_db_password }}
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+    ADD VOLUME HERE
+
   mesa-auth:
     image: "{{ docker_account }}/mesa-auth:latest"
     container_name: "{{ auth_service_name }}"
