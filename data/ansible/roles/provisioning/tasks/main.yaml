@@ -52,6 +52,7 @@
   loop:
     - docker==6.1.3
     - docker-compose
+    - requests==2.31.0
 
 - name: Criação de rede no docker
   community.docker.docker_network:

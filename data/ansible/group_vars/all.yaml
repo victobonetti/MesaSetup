@@ -1,4 +1,4 @@
 docker_account: victobonetti
 workdir_path: /etc/mesa
 config_dir_path: '{{ workdir_path }}/configs'
-compose_dir_path: '{{ config_path }}/composes/'
+compose_dir_path: '{{ workdir_path }}/composes'

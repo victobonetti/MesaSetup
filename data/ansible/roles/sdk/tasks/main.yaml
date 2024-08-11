@@ -1,22 +1,39 @@
-- name: Definição de variáveis para serviço de autenticação
+- name: Verificando existencia de 'secrets.json'
+  ansible.builtin.stat:
+    path: /etc/mesa/secrets.json
+  register: secrets_stats
+
+- name: Escrita de arquivo de secrets
+  block:
+  - name: Definição de variáveis para serviço de autenticação
+    ansible.builtin.set_fact:
+      auth_secret: "{{ lookup('community.general.random_string', special=false, length=12) }}"
+      encription_key: "{{ lookup('community.general.random_string', special=false, length=32) | b64encode }}"
+
+  - name: Definição de variáveis para database
+    ansible.builtin.set_fact:
+      mongo_db_password: "{{ lookup('community.general.random_string', special=false, length=12) }}"
+      mongo_db_username: "admin"
+      
+  - name: Definição de 'secrets_content'
+    ansible.builtin.set_fact:
+      secrets_content:
+        mongodb:
+          user: "{{ mongo_db_username }}"
+          pass: "{{ mongo_db_password }}"
+        auth:
+          secret: "{{ auth_secret }}"
+          key: "{{ encription_key }}"
+
+  - name: Escrita de arquivo com informações
+    ansible.builtin.copy:
+      dest: /etc/mesa/secrets.json
+      content: "{{ secrets_content }}"
+  when: not secrets_stats.stat.exists
+
+- name: Leitura de secrets
   ansible.builtin.set_fact:
-    auth_service_name: auth
-    auth_secret:
-    encription_key: 
-
-
-# self_name = "auth"
-# client_name = "teste"
-# auth_secret = "your_secret_key"
-# encryption_key = "ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg="
-
-- name: Definição de variáveis para database
-  ansible.builtin.set_fact:
-    mongo_db_host_name: mongo-db # Criar senha para acessar db e adicionar variaveis de ambiente no serviço auth
-    mongo_db_password: 
-    mongo_db_username: 
-
-# Atribuir VARS e criar arquivo dos composes em pasta separada
+    secrets: "{{ lookup('file', '/etc/mesa/secrets.json') | from_json }}"
 
 - name: Criação de pasta para arquivos de compose
   ansible.builtin.file:
@@ -30,6 +47,6 @@
 
 - name: Setup de serviço de Autenticação
   community.docker.docker_compose:
-    project_src: "{{ compose_dir_path }}/auth-compose.yaml" 
+    project_src: "{{ compose_dir_path }}" 
     files:
-      - infrastructure-compose.yml
+      - auth-compose.yaml

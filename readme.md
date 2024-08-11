@@ -12,5 +12,6 @@
     ``` bash
         sudo su
         cd /etc/mesa
+        sed -i -e 's/\r$//' setup.sh
         ./setup.sh
     ```

@@ -3,10 +3,9 @@
     - name: Execução de provisioning
       ansible.builtin.import_role:
         name: provisioning
-      tags: always
+      tags: provisioning
 
     - name: Instalação de SDK
-      ansible.builtin.include_role:
+      ansible.builtin.import_role:
         name: sdk
-      tags: always
-
+      tags: sdk

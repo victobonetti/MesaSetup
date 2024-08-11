@@ -7,8 +7,8 @@ services:
   mongodb:
     image: mongo:4.4.6
     environment:
-       - MONGO_INITDB_ROOT_USERNAME={{ secrets.mongodb.user }}
-       - MONGO_INITDB_ROOT_PASSWORD={{ secrets.mongodb.pass }}
+       - MONGO_INITDB_ROOT_USERNAME=admin
+       - MONGO_INITDB_ROOT_PASSWORD=vTjUJrRntQhW
     healthcheck:
       test: ["CMD","mongo", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -20,21 +20,20 @@ services:
       - "27017:27017"
 
   mesa-auth:
-    image: "{{ docker_account }}/mesa-auth:2024.3.0"
+    image: "victobonetti/mesa-auth:2024.3.0"
     container_name: "auth"
     restart: always
     environment:
         - SELF_NAME=auth
-        - CLIENT_NAME={{ client_name | default('client') }}
-        - AUTH_SECRET={{ secrets.auth.secret }}
+        - CLIENT_NAME=client
+        - AUTH_SECRET=mPUvByn8zhow
         - ENCRYPTION_KEY=ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg=
         - DB_HOST=mongodb
-        - DB_USER={{ secrets.mongodb.user }}
-        - DB_PASS={{ secrets.mongodb.pass }}
+        - DB_USER=admin
+        - DB_PASS=vTjUJrRntQhW
     networks:
       - servicos
     depends_on:
       - mongodb
     ports:
       - "5000:5000"
-
