@@ -1,0 +1,41 @@
+- name: Leitura de secrets
+  ansible.builtin.set_fact:
+    secrets: "{{ lookup('file', '/etc/mesa/secrets.json') | from_json }}"
+
+- name: Definição de variáveis
+  ansible.builtin.set_fact:
+    mongo_db_username: "{{ secrets.mongodb.user }}"
+    mongo_db_password: "{{ secrets.mongodb.pass }}"
+    new_tenant_id: "{{ 10000 | random | to_uuid | upper }}"
+
+- name: Criação de database e usuário inicial
+  community.docker.docker_container_exec:
+    container: composes_mongodb_1
+    command: >
+      mongo --username {{ mongo_db_username }} --password {{ mongo_db_password }} --eval '
+      db = db.getSiblingDB("{{ new_tenant_id }}");
+      db.createCollection("auth_users");
+      db.auth_users.insert({
+        email: "admin@example.com",
+        password: "gAAAAABmw5DcFwUlG1tES3PTyRJSCXARRgboAudJ5IHhAfRC0MyTS-8gTAACAidQbWzcU_MU5p_rLMLhz07XIa5PHk8KpTf09A==",
+        is_admin: true
+      });
+      db.auth_users.find_one({
+        email: "admin@example.com",
+        password: "gAAAAABmw5DcFwUlG1tES3PTyRJSCXARRgboAudJ5IHhAfRC0MyTS-8gTAACAidQbWzcU_MU5p_rLMLhz07XIa5PHk8KpTf09A==",
+        is_admin: true
+      });
+      '
+    chdir: /
+  register: result
+
+  # todo -  Criar Database General e Collection 'auth_users_by_tenant'
+
+        #   tenant_registry = {
+        #     'user_id': created_user['_id'],
+        #     'tenant_id': tenant_id,
+        #     'email': email
+        # }
+
+        # g.db['auth_users_by_tenant'].insert_one(tenant_registry)
+

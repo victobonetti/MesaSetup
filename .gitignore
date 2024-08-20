@@ -10,3 +10,4 @@
 .vagrant/machines/default/virtualbox/action_provision
 data/secrets.json
 data/composes/*
+data/composes/auth-compose.yaml

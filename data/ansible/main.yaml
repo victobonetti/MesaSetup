@@ -3,9 +3,18 @@
     - name: Execução de provisioning
       ansible.builtin.import_role:
         name: provisioning
-      tags: provisioning
+      tags: 
+        - provisioning
 
     - name: Instalação de SDK
       ansible.builtin.import_role:
         name: sdk
-      tags: sdk
+      tags: 
+        - sdk
+
+    - name: Criação de database para Tenant
+      ansible.builtin.import_role:
+        name: create_tenant
+      tags: 
+        - never
+        - create_tenant

@@ -8,7 +8,7 @@
   - name: Definição de variáveis para serviço de autenticação
     ansible.builtin.set_fact:
       auth_secret: "{{ lookup('community.general.random_string', special=false, length=12) }}"
-      encription_key: "{{ lookup('community.general.random_string', special=false, length=32) | b64encode }}"
+      encription_key: "ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg=" # todo
 
   - name: Definição de variáveis para database
     ansible.builtin.set_fact:
