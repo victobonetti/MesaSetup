@@ -35,7 +35,7 @@ services:
       - "27017:27017"
 
   mesa-auth:
-    image: "victobonetti/mesa-auth:2024.3.3"
+    image: "victobonetti/mesa-auth:2024.3.4"
     container_name: "auth"
     restart: always
     environment:
