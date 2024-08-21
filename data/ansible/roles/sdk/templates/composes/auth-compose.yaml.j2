@@ -4,6 +4,19 @@ networks:
       name: servicos
 
 services:
+  nginx:
+    container_name: nginx
+    image: nginx
+    volumes:
+      - /etc/mesa/configs/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - NGINX_HOST=mesa.com
+      - NGINX_PORT=80
+    networks:
+      - servicos
   mongodb:
     image: mongo:4.4.6
     environment:

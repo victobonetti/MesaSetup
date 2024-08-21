@@ -6,26 +6,57 @@
   ansible.builtin.set_fact:
     mongo_db_username: "{{ secrets.mongodb.user }}"
     mongo_db_password: "{{ secrets.mongodb.pass }}"
-    new_tenant_id: "{{ 10000 | random | to_uuid | upper }}"
+    new_tenant_id: "{{ tenant | default(10000 | random | to_uuid | upper) }}"
 
 - name: Criação de database e usuário inicial
   community.docker.docker_container_exec:
     container: composes_mongodb_1
     command: >
-      mongo --username {{ mongo_db_username }} --password {{ mongo_db_password }} --eval '
-      db = db.getSiblingDB("{{ new_tenant_id }}");
-      db.createCollection("auth_users");
-      db.auth_users.insert({
-        email: "admin@example.com",
-        password: "gAAAAABmw5DcFwUlG1tES3PTyRJSCXARRgboAudJ5IHhAfRC0MyTS-8gTAACAidQbWzcU_MU5p_rLMLhz07XIa5PHk8KpTf09A==",
-        is_admin: true
-      });
-      db.auth_users.find_one({
-        email: "admin@example.com",
-        password: "gAAAAABmw5DcFwUlG1tES3PTyRJSCXARRgboAudJ5IHhAfRC0MyTS-8gTAACAidQbWzcU_MU5p_rLMLhz07XIa5PHk8KpTf09A==",
-        is_admin: true
-      });
-      '
+        mongo --username {{ mongo_db_username }} --password {{ mongo_db_password }} --eval '
+        db = db.getSiblingDB("{{ new_tenant_id }}");
+        db.createCollection("auth_users");
+        var user = db.auth_users.findOneAndUpdate(
+          {
+            email: "admin@example.com",
+            password: "gAAAAABmw5DcFwUlG1tES3PTyRJSCXARRgboAudJ5IHhAfRC0MyTS-8gTAACAidQbWzcU_MU5p_rLMLhz07XIa5PHk8KpTf09A==",
+            is_admin: true
+          },
+          {
+            $setOnInsert: {
+              email: "admin@example.com",
+              password: "gAAAAABmw5DcFwUlG1tES3PTyRJSCXARRgboAudJ5IHhAfRC0MyTS-8gTAACAidQbWzcU_MU5p_rLMLhz07XIa5PHk8KpTf09A==",
+              is_admin: true
+            }
+          },
+          {
+            returnNewDocument: true,
+            upsert: true
+          }
+        );
+
+        db = db.getSiblingDB("general");
+        printjson()
+
+        db.auth_users_by_tenant.findOneAndUpdate(
+          {
+            user_id: user._id,
+            tenant_id: "{{ new_tenant_id }}",
+            email: user.email
+          },
+          {
+            $setOnInsert: {
+              user_id: user._id,
+              tenant_id: "{{ new_tenant_id }}",
+              email: user.email
+            }
+          },
+          {
+            returnNewDocument: true,
+            upsert: true
+          }
+        );
+
+        '
     chdir: /
   register: result
 
