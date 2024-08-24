@@ -55,11 +55,11 @@ services:
       - "5000:5000"
 
   mesa-person:
-    image: "victobonetti/mesa-person:2024.3.1"
+    image: "victobonetti/mesa-person:2024.3.2"
     container_name: "person"
     restart: always
     environment:
-        - AUTH_URL=http://auth:5000
+        - AUTH_URL=http://auth:5000/auth
         - DB_HOST=mongodb
         - DB_USER=admin
         - DB_PASS=Rt6CRFxNkrqw

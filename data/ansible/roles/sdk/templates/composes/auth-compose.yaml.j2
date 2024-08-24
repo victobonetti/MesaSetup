@@ -55,11 +55,11 @@ services:
       - "5000:5000"
 
   mesa-person:
-    image: "{{ docker_account }}/mesa-person:2024.3.1"
+    image: "{{ docker_account }}/mesa-person:2024.3.2"
     container_name: "person"
     restart: always
     environment:
-        - AUTH_URL=http://auth:5000
+        - AUTH_URL=http://auth:5000/auth
         - DB_HOST=mongodb
         - DB_USER={{ secrets.mongodb.user }}
         - DB_PASS={{ secrets.mongodb.pass }}
