@@ -10,7 +10,7 @@
 
 - name: Criação de database e usuário inicial
   community.docker.docker_container_exec:
-    container: composes_mongodb_1
+    container: composes-mongodb-1
     command: >
         mongo --username {{ mongo_db_username }} --password {{ mongo_db_password }} --eval '
         db = db.getSiblingDB("{{ new_tenant_id }}");

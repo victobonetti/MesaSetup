@@ -55,7 +55,7 @@ services:
       - "5000:5000"
 
   mesa-person:
-    image: "victobonetti/mesa-person:2024.3.7"
+    image: "victobonetti/mesa-person:2024.3.8"
     container_name: "person"
     restart: always
     environment:
