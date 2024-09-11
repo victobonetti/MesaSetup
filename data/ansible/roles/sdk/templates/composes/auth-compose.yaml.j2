@@ -36,7 +36,7 @@ services:
       - "27017:27017"
 
   mesa-auth:
-    image: "{{ docker_account }}/mesa-auth:2024.3.14"
+    image: "{{ docker_account }}/mesa-auth:2024.3.17"
     container_name: "auth"
     restart: always
     environment:
@@ -55,7 +55,7 @@ services:
       - "5000:5000"
 
   mesa-person:
-    image: "{{ docker_account }}/mesa-person:2024.3.8"
+    image: "{{ docker_account }}/mesa-person:2024.3.9"
     container_name: "person"
     restart: always
     environment:
