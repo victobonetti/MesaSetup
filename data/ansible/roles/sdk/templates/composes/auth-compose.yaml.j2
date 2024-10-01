@@ -55,7 +55,7 @@ services:
       - "5000:5000"
 
   mesa-person:
-    image: "{{ docker_account }}/mesa-person:2024.3.9"
+    image: "{{ docker_account }}/mesa-person:2024.3.10"
     container_name: "person"
     restart: always
     environment:
@@ -69,3 +69,19 @@ services:
       - mesa-auth
     ports:
       - "5001:5000"
+
+  mesa-products:
+    image: "{{ docker_account }}/mesa-products:2024.3.4"
+    container_name: "products"
+    restart: always
+    environment:
+        - AUTH_URL=http://auth:5000/auth
+        - DB_HOST=mongodb
+        - DB_USER={{ secrets.mongodb.user }}
+        - DB_PASS={{ secrets.mongodb.pass }}
+    networks:
+      - servicos
+    depends_on:
+      - mesa-auth
+    ports:
+      - "5002:5000"
